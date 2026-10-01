@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kryptex Monitor</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 15px; width: 320px; background-color: #1e1e24; color: #e5e7eb; }
+        h3 { margin-top: 0; color: #60a5fa; text-align: center; font-size: 18px; }
+        label { font-size: 12px; margin-bottom: 5px; display: block; color: #9ca3af; }
+        input[type="text"] { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #4b5563; border-radius: 4px; background-color: #374151; color: white; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background-color: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #1d4ed8; }
+        #status { margin-top: 10px; font-size: 12px; color: #10b981; display: none; text-align: center; }
+        
+        .donate-btn-styled {
+            width: 100%; padding: 12px; 
+            background: linear-gradient(135deg, #f59e0b, #d97706); 
+            color: #1e1e24; font-size: 14px; font-weight: bold;
+            border: none; border-radius: 6px; cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+        }
+        .donate-btn-styled:hover { background: linear-gradient(135deg, #fbbf24, #f59e0b); transform: translateY(-1px); }
+        .donate-btn-styled:active { transform: translateY(1px); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
+
+        .donate-section { display: none; margin-top: 15px; background-color: #27272a; padding: 15px; border-radius: 6px; }
+        .crypto-item { margin-bottom: 25px; text-align: center; border-bottom: 1px solid #4b5563; padding-bottom: 20px; }
+        .crypto-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        
+        .crypto-title { 
+            font-size: 15px; font-weight: bold; color: #f59e0b; margin-bottom: 10px;
+        }
+        
+        .qr-img { max-width: 100%; max-height: 180px; border-radius: 8px; margin-bottom: 10px; object-fit: contain; }
+        
+        .wallet-container { display: flex; gap: 5px; margin-top: 5px; }
+        .wallet-input { font-size: 10px !important; padding: 6px !important; color: #60a5fa !important; margin-bottom: 0 !important; flex-grow: 1; }
+        .copy-btn { width: auto; padding: 0 12px; font-size: 11px; background-color: #4b5563; }
+        .copy-btn:hover { background-color: #6b7280; }
+        
+        .input-group { display: flex; gap: 5px; margin-top: 5px; margin-bottom: 15px; }
+        .input-group input { margin: 0; flex-grow: 1; }
+        .load-btn { width: auto; background-color: #10b981; padding: 0 12px; font-size: 14px; }
+        .load-btn:hover { background-color: #059669; }
+    </style>
+</head>
+<body>
+    <h3>Kryptex Monitor</h3>
+    <label for="pcName">Target PC Name:</label>
+    <div class="input-group">
+        <input list="pcList" type="text" id="pcName" placeholder="Ex: Rig01">
+        <datalist id="pcList"></datalist>
+        <button id="loadMachinesBtn" class="load-btn" title="Scan computers on Kryptex tab">🔄</button>
+    </div>
+    <button id="saveBtn">Save Configuration</button>
+    <div id="status">Saved successfully!</div>
+
+    <hr style="border: 0; border-top: 1px solid #4b5563; margin: 20px 0 15px 0;">
+    <button id="donateBtn" class="donate-btn-styled">Support the Project (Donate)</button>
+    
+    <div id="donateArea" class="donate-section">
+
+        <div class="crypto-item">
+            <div class="crypto-title">PRL</div>
+            <img src="prl_clean.png" class="qr-img" alt="QR Code PRL">
+            <label style="display:block; text-align:left;">PRL Address:</label>
+            <div class="wallet-container" style="margin-bottom: 10px;">
+                <input type="text" id="prlKey" class="wallet-input" value="prl1pjw55j7pah37jhwc6sa2mct7eest4ahrhdgqyc8vwuk2xmyfeuxqss8v254" readonly>
+                <button class="copy-btn" data-target="prlKey">Copy</button>
+            </div>
+            
+            <label style="display:block; text-align:left; color:#f59e0b;">Internal Transfer Safetrade (0 Fee):</label>
+            <div class="wallet-container">
+                <input type="text" id="prlSafe" class="wallet-input" value="ID5136029874" readonly style="color: #f59e0b !important;">
+                <button class="copy-btn" data-target="prlSafe">Copy</button>
+            </div>
+        </div>
+
+        <div class="crypto-item">
+            <div class="crypto-title">QUANTUS</div>
+            <img src="quantus_clean.png" class="qr-img" alt="QR Code QUANTUS">
+            <label style="display:block; text-align:left;">QUANTUS Address:</label>
+            <div class="wallet-container" style="margin-bottom: 10px;">
+                <input type="text" id="quanKey" class="wallet-input" value="qzmmxdpXhjfxgLUk31ebZZTAqjUCadLv2b242RmUiZbZhu6Q1" readonly>
+                <button class="copy-btn" data-target="quanKey">Copy</button>
+            </div>
+            
+            <label style="display:block; text-align:left; color:#f59e0b;">Internal Transfer Safetrade (0 Fee):</label>
+            <div class="wallet-container">
+                <input type="text" id="quanSafe" class="wallet-input" value="ID5136029874" readonly style="color: #f59e0b !important;">
+                <button class="copy-btn" data-target="quanSafe">Copy</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
