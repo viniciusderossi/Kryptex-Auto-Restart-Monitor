@@ -1,4 +1,4 @@
-import os
+﻿import os
 import subprocess
 import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -37,17 +37,17 @@ class RequestHandler(BaseHTTPRequestHandler):
             current_time = time.time()
             # 10 minute cooldown (600 seconds)
             if current_time - last_restart < 600:
-                print(f"[{time.strftime('%H:%M:%S')}] \033[93mRestart ignored. Cooldown active (10 minutes).\033[0m")
+                print(f"[{time.strftime('%H:%M:%S')}] \033[93mRestart ignored. Cooldown active (10 minutes).\033[0m", flush=True)
                 self.wfile.write(b"Cooldown active. Restart ignored.")
                 return
 
             last_restart = current_time
-            print(f"[{time.strftime('%H:%M:%S')}] \033[91mCRITICAL ALERT RECEIVED! Machine offline or crashed. Executing hard restart...\033[0m")
+            print(f"[{time.strftime('%H:%M:%S')}] \033[91mCRITICAL ALERT RECEIVED! Machine offline or crashed. Executing hard restart...\033[0m", flush=True)
             
             try:
                 # 1. Total aggressive termination of Kryptex using WMI in PowerShell
                 # This guarantees that frozen processes or invisible background services are destroyed
-                print(f"[{time.strftime('%H:%M:%S')}] Killing all Kryptex and miner processes...")
+                print(f"[{time.strftime('%H:%M:%S')}] Killing all Kryptex and miner processes...", flush=True)
                 kill_cmd = 'powershell -Command "Get-WmiObject Win32_Process | Where-Object { $_.Name -like \'*Kryptex*\' -or $_.Name -like \'*miner*\' -or $_.Name -like \'*srb*\' } | ForEach-Object { $_.Terminate() }"'
                 subprocess.run(kill_cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 
@@ -57,20 +57,13 @@ class RequestHandler(BaseHTTPRequestHandler):
                 if os.path.exists(KRYPTEX_EXE_PATH):
                     # TOTAL SHIELDING against ugly Kryptex log messages:
                     # Redirects garbage (stderr and stdout) to a black hole (DEVNULL)
-                    DETACHED_PROCESS = 0x00000008
-                    subprocess.Popen(
-                        [KRYPTEX_EXE_PATH], 
-                        creationflags=DETACHED_PROCESS,
-                        stdout=subprocess.DEVNULL,
-                        stderr=subprocess.DEVNULL,
-                        stdin=subprocess.DEVNULL
-                    )
-                    print(f"[{time.strftime('%H:%M:%S')}] \033[92mKryptex successfully reopened and completely shielded!\033[0m\n")
+                    os.startfile(KRYPTEX_EXE_PATH)
+                    print(f"[{time.strftime('%H:%M:%S')}] \033[92mKryptex successfully reopened and completely shielded!\033[0m\n", flush=True)
                 else:
-                    print(f"[{time.strftime('%H:%M:%S')}] ERROR: Could not find Kryptex at path {KRYPTEX_EXE_PATH}\n")
+                    print(f"[{time.strftime('%H:%M:%S')}] ERROR: Could not find Kryptex at path {KRYPTEX_EXE_PATH}\n", flush=True)
             
             except Exception as e:
-                print(f"[{time.strftime('%H:%M:%S')}] Error while trying to restart: {e}\n")
+                print(f"[{time.strftime('%H:%M:%S')}] Error while trying to restart: {e}\n", flush=True)
             
             self.wfile.write(b"Restart Command Executed!")
 
@@ -82,10 +75,10 @@ class RequestHandler(BaseHTTPRequestHandler):
 def run(server_class=HTTPServer, handler_class=RequestHandler, port=15000):
     server_address = ('127.0.0.1', port)
     httpd = server_class(server_address, handler_class)
-    print(f"\033[96m==========================================================")
-    print(f"  KRYPTEX WATCHDOG SERVER RUNNING ON PORT {port}")
-    print(f"  WAITING FOR EXTENSION ALERTS...")
-    print(f"==========================================================\033[0m\n")
+    print(f"\033[96m==========================================================", flush=True)
+    print(f"  KRYPTEX WATCHDOG SERVER RUNNING ON PORT {port}", flush=True)
+    print(f"  WAITING FOR EXTENSION ALERTS...", flush=True)
+    print(f"==========================================================\033[0m\n", flush=True)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

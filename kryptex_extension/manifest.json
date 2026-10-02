@@ -8,12 +8,17 @@
     "tabs"
   ],
   "host_permissions": [
-    "http://127.0.0.1:15000/*"
+    "http://127.0.0.1:15000/*",
+    "http://localhost:15000/*"
   ],
   "content_scripts": [
     {
-      "matches": ["*://*.kryptex.com/*"],
-      "js": ["content.js"]
+      "matches": [
+        "*://*.kryptex.com/*"
+      ],
+      "js": [
+        "content.js"
+      ]
     }
   ],
   "background": {

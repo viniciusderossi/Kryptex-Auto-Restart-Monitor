@@ -26,8 +26,8 @@ if %errorLevel% neq 0 (
     curl -o python_installer.exe https://www.python.org/ftp/python/3.11.8/python-3.11.8-amd64.exe
     
     echo.
-    echo Installing Python on your system (this may take 1 or 2 minutes)...
-    :: Installs silently, making sure to check the crucial "Add to PATH" option
+    echo Installing Python on your system. This may take 1 or 2 minutes...
+    REM Installs silently, making sure to check the crucial "Add to PATH" option
     python_installer.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0
     
     echo Installation complete! Cleaning up files...
