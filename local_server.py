@@ -37,7 +37,8 @@ class RequestHandler(BaseHTTPRequestHandler):
             current_time = time.time()
             # 10 minute cooldown (600 seconds)
             if current_time - last_restart < 600:
-                print(f"[{time.strftime('%H:%M:%S')}] \033[93mRestart ignored. Cooldown active (10 minutes).\033[0m", flush=True)
+                time_left = int(600 - (current_time - last_restart))
+                print(f"[{time.strftime('%H:%M:%S')}] \033[93mALERT IGNORED: Waiting for Kryptex to start... ({time_left}s remaining)\033[0m   ", end='\r', flush=True)
                 self.wfile.write(b"Cooldown active. Restart ignored.")
                 return
 

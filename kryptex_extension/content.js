@@ -43,28 +43,39 @@ function verificarStatus() {
         
         let achouProblema = false;
         let achouPC = false;
-        
-        let allElements = document.querySelectorAll('*');
-        let containersPC = [];
+        let isCalculating = false;
         let pcRegex = new RegExp("\\b" + PC_NAME + "\\b", "i");
         
-        allElements.forEach(el => {
-            let txt = el.innerText || "";
-            if (pcRegex.test(txt) && txt.length > 5 && txt.length < 300) {
-                containersPC.push(txt);
-                achouPC = true;
-            }
+        let nameNodes = Array.from(document.querySelectorAll('*')).filter(el => {
+            return el.children.length === 0 && pcRegex.test(el.innerText || el.textContent || "");
         });
 
-        if (achouPC) {
+        if (nameNodes.length > 0) {
+            achouPC = true;
             let temDinheiro = false;
-            let isCalculating = false;
+            let temErroOuvido = false;
             
-            containersPC.forEach(txt => {
+            nameNodes.forEach(node => {
+                let current = node;
+                let bestContainer = current;
+                
+                while (current && current.innerText && current.innerText.length < 150 && current.tagName !== 'BODY') {
+                    bestContainer = current;
+                    current = current.parentElement;
+                }
+                
+                let txt = bestContainer.innerText || "";
+                let htmlStr = bestContainer.innerHTML.toLowerCase();
                 let lower = txt.toLowerCase();
+                
                 if (lower.includes("calculando") || lower.includes("calculating")) {
                     isCalculating = true;
                 }
+                
+                if (htmlStr.includes("danger") || htmlStr.includes("error") || htmlStr.includes("red") || htmlStr.includes("offline") || htmlStr.includes("alert")) {
+                    temErroOuvido = true;
+                }
+                
                 if (txt.includes("R$") || txt.includes("$")) {
                     if (!txt.includes("R$ 0,00") && !txt.includes("$0.00") && !txt.includes("$ 0.00")) {
                         temDinheiro = true;
@@ -72,7 +83,9 @@ function verificarStatus() {
                 }
             });
             
-            if (!temDinheiro && !isCalculating) {
+            if (temErroOuvido) {
+                achouProblema = true;
+            } else if (!temDinheiro && !isCalculating) {
                 achouProblema = true;
             }
         }
@@ -80,6 +93,11 @@ function verificarStatus() {
         if (!achouPC) {
             console.log(`[KRYPTEX MONITOR] PC '${PC_NAME}' not found on screen.`);
             chrome.runtime.sendMessage({ action: "SEND_STATUS", status: "notfound" });
+            return;
+        }
+
+        if (isCalculating) {
+            console.log(`[KRYPTEX MONITOR] PC '${PC_NAME}' is calculating. Waiting for next cycle...`);
             return;
         }
 
