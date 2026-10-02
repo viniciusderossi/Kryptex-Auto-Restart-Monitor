@@ -1,4 +1,4 @@
-﻿import os
+import os
 import subprocess
 import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -55,21 +55,26 @@ class RequestHandler(BaseHTTPRequestHandler):
                 time.sleep(5)
                 
                 if os.path.exists(KRYPTEX_EXE_PATH):
-                    # TOTAL SHIELDING against ugly Kryptex log messages:
-                    # Redirects garbage (stderr and stdout) to a black hole (DEVNULL)
-                    os.startfile(KRYPTEX_EXE_PATH)
+                    # Using DETACHED_PROCESS to ensure Kryptex doesn't freeze the script and runs independently
+                    DETACHED_PROCESS = 0x00000008
+                    CREATE_NEW_PROCESS_GROUP = 0x00000200
+                    subprocess.Popen(
+                        [KRYPTEX_EXE_PATH],
+                        creationflags=DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP,
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
+                        stdin=subprocess.DEVNULL
+                    )
                     print(f"[{time.strftime('%H:%M:%S')}] \033[92mKryptex successfully reopened and completely shielded!\033[0m\n", flush=True)
                 else:
-                    print(f"[{time.strftime('%H:%M:%S')}] ERROR: Could not find Kryptex at path {KRYPTEX_EXE_PATH}\n", flush=True)
+                    print(f"[{time.strftime('%H:%M:%S')}] \033[91mERROR: Could not find Kryptex at path {KRYPTEX_EXE_PATH}\033[0m\n", flush=True)
             
             except Exception as e:
                 print(f"[{time.strftime('%H:%M:%S')}] Error while trying to restart: {e}\n", flush=True)
-            
-            self.wfile.write(b"Restart Command Executed!")
 
         elif self.path == '/online':
             # Simple heartbeat from extension
-            print(f"[{time.strftime('%H:%M:%S')}] \033[92mMachine OK and mining.\033[0m", end='\r')
+            print(f"[{time.strftime('%H:%M:%S')}] \033[92m[✓] Monitoring: PC ONLINE and mining correctly...\033[0m   ", end='\r', flush=True)
             self.wfile.write(b"Status OK")
 
 def run(server_class=HTTPServer, handler_class=RequestHandler, port=15000):

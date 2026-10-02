@@ -12,6 +12,10 @@ if %errorLevel% == 0 (
 :run
 cd /d "%~dp0"
 
+:: Kill previous sessions stuck on the same port
+echo Cleaning up old server sessions...
+powershell -Command "Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match 'local_server.py' -and $_.ProcessId -ne $PID } | Invoke-CimMethod -MethodName Terminate" >nul 2>&1
+
 :: Check if Python is installed
 python --version >nul 2>&1
 if %errorLevel% neq 0 (
